@@ -1,0 +1,873 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd
+            http://www.liquibase.org/xml/ns/pro
+            http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd">
+
+    <changeSet id="01-create-collection-tables" author="pushkin">
+        <createTable tableName="music_collection">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="external_id" type="bigint">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="is_private" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_synchronized" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_scan_time" type="datetime"/>
+        </createTable>
+        <rollback>
+            <dropTable tableName="music_collection"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="02-create-music-pack-tables" author="pushkin">
+        <createTable tableName="music_pack">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="external_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="collection_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_music_pack_collection_id"
+                             references="music_collection(id)"/>
+            </column>
+            <column name="title" type="nvarchar(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="nvarchar(1000)"/>
+            <column name="cover_url" type="varchar(2048)"/>
+            <column name="page_url" type="varchar(2048)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="added_at" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="removed" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="tag">
+            <column name="value" type="nvarchar(50)">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="music_pack_tag">
+            <column name="music_pack_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_music_pack_tag_music_pack_id"
+                             references="music_pack(id)"/>
+            </column>
+            <column name="tag" type="nvarchar(50)">
+                <constraints nullable="false"
+                             foreignKeyName="fk_music_pack_tag_tag_value"
+                             references="tag(value)"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="music_pack_tag"/>
+            <dropTable tableName="tag"/>
+            <dropTable tableName="music_pack"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="03-create-state-property-table" author="pushkin">
+        <createTable tableName="state_property">
+            <column name="key" type="varchar(50)">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="value" type="varchar"/>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="state_property"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="05-create-user-tables" author="pushkin">
+        <createTable tableName="user_data">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="external_id" type="bigint">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="user_collection">
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_user_collection_user_id"
+                             references="user_data(id)"/>
+            </column>
+            <column name="collection_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_user_collection_collection_id"
+                             references="music_collection(id)"/>
+            </column>
+            <column name="is_owner" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="can_write" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+            <column name="selected" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint constraintName="user_id_collection_id"
+                             tableName="user_collection"
+                             columnNames="user_id, collection_id"/>
+
+        <rollback>
+            <!--            todo correct name -->
+            <dropUniqueConstraint tableName="user_id_collection_id"/>
+            <dropTable tableName="user_collection"/>
+            <dropTable tableName="user_data"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="06-create-action-event-table" author="pushkin">
+        <createTable tableName="action_event">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="event_time" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="action_event"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="07-add-title-column-to-music-collection-table" author="pushkin">
+        <addColumn tableName="music_collection">
+            <column name="title" type="nvarchar(200)"/>
+        </addColumn>
+
+        <rollback>
+            <dropColumn tableName="music_collection" columnName="title"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="08-add-collection-id-column-to-action-event-table" author="pushkin">
+        <addColumn tableName="action_event">
+            <column name="collection_id" type="bigint">
+                <constraints nullable="true"
+                             foreignKeyName="fk_action_event_collection_id"
+                             references="music_collection(id)"/>
+            </column>
+        </addColumn>
+
+        <rollback>
+            <dropColumn tableName="action_event" columnName="collection_id"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="09-add-music-pack-id-and-message-id-columns-to-action-event-table" author="pushkin">
+        <addColumn tableName="action_event">
+            <column name="message_id" type="bigint"/>
+            <column name="music_pack_id" type="bigint"/>
+        </addColumn>
+
+        <rollback>
+            <dropColumn tableName="action_event" columnName="music_pack_id"/>
+            <dropColumn tableName="action_event" columnName="message_id"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="10-add-type-column-to-music-collection-table" author="pushkin">
+        <addColumn tableName="music_collection">
+            <column name="type" type="varchar(30)" defaultValue="LOCAL">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <rollback>
+            <dropColumn tableName="music_collection" columnName="type"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="11-change-external-id-columns-notnull-constraint-table" author="pushkin">
+        <dropNotNullConstraint tableName="music_collection"
+                               columnName="external_id"/>
+        <dropNotNullConstraint tableName="music_pack"
+                               columnName="external_id"/>
+    </changeSet>
+
+    <changeSet id="12-add-removed-column-to-music-collection-table" author="pushkin">
+        <addColumn tableName="music_collection">
+            <column name="removed" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="13-change-external-id-columns-unique-constraint" author="pushkin">
+        <dropUniqueConstraint constraintName="music_collection_external_id_key"
+                              tableName="music_collection"
+                              uniqueColumns="external_id"/>
+    </changeSet>
+
+    <changeSet id="14-create-user-token-table" author="pushkin">
+        <createTable tableName="user_token">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="type" type="varchar(25)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_user_token_user_id"
+                             references="user_data(id)"/>
+            </column>
+            <column name="value" type="varchar(1000)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="user_token"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="15-change-external-id-type-for-music-pack-and-collection-tables" author="pushkin">
+        <modifyDataType tableName="music_pack"
+                        columnName="external_id"
+                        newDataType="varchar(100)"/>
+        <modifyDataType tableName="music_collection"
+                        columnName="external_id"
+                        newDataType="varchar(100)"/>
+    </changeSet>
+
+    <changeSet id="16-add-account-name-column-to-user-token-table" author="pushkin">
+        <addColumn tableName="user_token">
+            <column name="account_name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="17-add-expiration-date-column-to-user-token-table" author="pushkin">
+        <addColumn tableName="user_token">
+            <column name="expiration_date" type="datetime"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="18-create-music-entities-tables" author="pushkin">
+        <createTable tableName="music_artist">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="name" type="nvarchar(300)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="created_at" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="music_album">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="title" type="nvarchar(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="year" type="int"/>
+            <column name="release_date" type="datetime"/>
+            <column name="created_at" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="music_album_artist">
+            <column name="music_album_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_music_album_artist_album_id"
+                             references="music_album(id)"/>
+            </column>
+            <column name="music_artist_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_music_album_artist_artist_id"
+                             references="music_artist(id)"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="music_track">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="title" type="nvarchar(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="album_id" type="bigint">
+                <constraints nullable="true"
+                             foreignKeyName="fk_music_track_album_id"
+                             references="music_album(id)"/>
+            </column>
+            <column name="created_at" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="music_track_artist">
+            <column name="music_track_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_music_track_artist_track_id"
+                             references="music_track(id)"/>
+            </column>
+            <column name="music_artist_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_music_track_artist_artist_id"
+                             references="music_artist(id)"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="music_artist_source">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="source_type" type="varchar(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="source_url" type="varchar(2048)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="music_artist_id" type="bigint">
+                <constraints nullable="true"
+                             foreignKeyName="fk_music_artist_source_artist_id"
+                             references="music_artist(id)"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="music_album_source">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="source_type" type="varchar(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="source_url" type="varchar(2048)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="music_album_id" type="bigint">
+                <constraints nullable="true"
+                             foreignKeyName="fk_music_album_source_album_id"
+                             references="music_album(id)"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="music_track_source">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="source_type" type="varchar(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="source_url" type="varchar(2048)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="music_track_id" type="bigint">
+                <constraints nullable="true"
+                             foreignKeyName="fk_music_track_source_track_id"
+                             references="music_track(id)"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="music_pack_artist">
+            <column name="music_pack_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_music_pack_artist_pack_id"
+                             references="music_pack(id)"/>
+            </column>
+            <column name="music_artist_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_music_pack_artist_artist_id"
+                             references="music_artist(id)"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="music_pack_album">
+            <column name="music_pack_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_music_pack_album_pack_id"
+                             references="music_pack(id)"/>
+            </column>
+            <column name="music_album_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_music_pack_album_album_id"
+                             references="music_album(id)"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="music_pack_track">
+            <column name="music_pack_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_music_pack_track_pack_id"
+                             references="music_pack(id)"/>
+            </column>
+            <column name="music_track_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_music_pack_track_track_id"
+                             references="music_track(id)"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="music_pack_track"/>
+            <dropTable tableName="music_pack_album"/>
+            <dropTable tableName="music_pack_artist"/>
+            <dropTable tableName="music_track_source"/>
+            <dropTable tableName="music_album_source"/>
+            <dropTable tableName="music_artist_source"/>
+            <dropTable tableName="music_track_artist"/>
+            <dropTable tableName="music_track"/>
+            <dropTable tableName="music_album_artist"/>
+            <dropTable tableName="music_album"/>
+            <dropTable tableName="music_artist"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="19-drop-unique-for-music-artist-name-column" author="pushkin">
+        <dropUniqueConstraint constraintName="music_artist_name_key"
+                              tableName="music_artist"
+                              uniqueColumns="name"/>
+    </changeSet>
+
+    <changeSet id="20-add-columns-to-music-pack-track-table" author="pushkin">
+        <addColumn tableName="music_pack_track">
+            <column name="added_at" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="position" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="21-change-primary-key-to-music-pack-track-table" author="pushkin">
+        <addColumn tableName="music_pack_track">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="22-add-editable-column-to-music-pack-table" author="pushkin">
+        <addColumn tableName="music_pack">
+            <column name="editable" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="23-add-feature-column-to-user-collection-table" author="pushkin">
+        <addColumn tableName="user_collection">
+            <column name="feature" type="varchar(50)" defaultValue="NONE">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="24-add-feature-column-to-music-pack-table" author="pushkin">
+        <addColumn tableName="music_pack">
+            <column name="feature" type="varchar(50)" defaultValue="NONE">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="25-add-updated-at-to-music-pack-table" author="pushkin">
+        <addColumn tableName="music_pack">
+            <column name="updated_at" type="datetime"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="26-drop-feature-column-from-user-collection-table" author="pushkin">
+        <dropColumn tableName="user_collection" columnName="feature"/>
+    </changeSet>
+
+    <changeSet id="27-add-columns-to-music-pack-tables" author="pushkin">
+        <addColumn tableName="music_pack_album">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="position" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="music_pack_artist">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="position" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <addColumn tableName="music_track">
+            <column name="album_position" type="int"/>
+        </addColumn>
+
+        <dropNotNullConstraint tableName="music_pack" columnName="page_url"/>
+
+        <rollback>
+            <addNotNullConstraint tableName="music_pack" columnName="page_url"/>
+            <dropColumn tableName="music_track" columnName="album_position"/>
+            <dropColumn tableName="music_pack_artist" columnName="position"/>
+            <dropColumn tableName="music_pack_artist" columnName="id"/>
+            <dropColumn tableName="music_pack_album" columnName="position"/>
+            <dropColumn tableName="music_pack_album" columnName="id"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="28-add-added-at-column-to-music-pack-entities-tables" author="pushkin">
+        <addColumn tableName="music_pack_artist">
+            <column name="added_at" type="datetime"/>
+        </addColumn>
+        <addColumn tableName="music_pack_album">
+            <column name="added_at" type="datetime"/>
+        </addColumn>
+        <rollback>
+            <dropColumn tableName="music_pack_album" columnName="added_at"/>
+            <dropColumn tableName="music_pack_artist" columnName="added_at"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="29-create-download-process-info-table" author="pushkin">
+        <createTable tableName="download_process_info">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_user_token_user_id"
+                             references="user_data(id)"/>
+            </column>
+            <column name="status" type="varchar(25)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="source_url" type="varchar(2048)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="file_path" type="nvarchar(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="track_title" type="nvarchar(300)">
+            </column>
+            <column name="track_duration_sec" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_parts" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="downloaded_parts" type="int">
+            </column>
+            <column name="error_description" type="nvarchar(500)">
+            </column>
+            <column name="added_at" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="datetime">
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="download_process_info"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="30-add-request-id-column-to-download-process-info-table" author="pushkin">
+        <addColumn tableName="download_process_info">
+            <column name="request_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+        <rollback>
+            <dropColumn tableName="download_process_info" columnName="request_id"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="31-add-download-process-request-id-sequence" author="pushkin">
+        <createSequence sequenceName="download_process_request_id_sequence"
+                        incrementBy="1"
+                        minValue="0"
+                        startValue="0"/>
+        <rollback>
+            <dropSequence sequenceName="download_process_request_id_sequence"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="32-create-download-process-to-request-table" author="pushkin">
+        <createTable tableName="download_process_to_request">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="process_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_download_process_info_id"
+                             references="download_process_info(id)"/>
+            </column>
+            <column name="request_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <dropColumn tableName="download_process_info" columnName="request_id"/>
+
+        <rollback>
+            <dropTable tableName="download_process_to_request"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="33-create-file-external-info-table" author="pushkin">
+        <createTable tableName="file_external_info">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="process_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_download_process_info_id"
+                             references="download_process_info(id)"/>
+            </column>
+            <column name="external_id" type="varchar(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="varchar(25)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="file_external_info"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="34-drop-download-process-info-user-id-column" author="pushkin">
+        <dropColumn tableName="download_process_info" columnName="user_id"/>
+    </changeSet>
+
+    <changeSet id="35-create-user-to-download-process-info-table" author="pushkin">
+        <createTable tableName="user_to_download_process_info">
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_user_data_id"
+                             references="user_data(id)"/>
+            </column>
+            <column name="process_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_download_process_info_id"
+                             references="download_process_info(id)"/>
+            </column>
+            <column name="is_owner" type="boolean" defaultValue="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addUniqueConstraint constraintName="user_id_process_id"
+                             tableName="user_to_download_process_info"
+                             columnNames="user_id, process_id"/>
+
+        <rollback>
+            <dropUniqueConstraint tableName="user_id_process_id"/>
+            <dropTable tableName="user_to_download_process_info"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="36-create-track-local-file-table" author="pushkin">
+        <createTable tableName="track_local_file">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="file_path" type="nvarchar(500)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="track_title" type="nvarchar(300)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="track_duration_sec" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="download_process_id" type="bigint">
+                <constraints nullable="true"
+                             foreignKeyName="fk_download_process_info_id"
+                             references="download_process_info(id)"/>
+            </column>
+            <column name="added_at" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="track_local_file"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="37-changed-file-external-info-references" author="pushkin">
+        <dropColumn tableName="file_external_info" columnName="process_id"/>
+        <addColumn tableName="file_external_info">
+            <column name="track_local_file_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_track_local_file_id"
+                             references="track_local_file(id)"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="38-add-music-pack-track-local-file-table" author="pushkin">
+        <createTable tableName="music_pack_track_local_file">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="music_pack_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_music_pack_id"
+                             references="music_pack(id)"/>
+            </column>
+            <column name="track_local_file_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_track_local_file_id"
+                             references="track_local_file(id)"/>
+            </column>
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="music_pack_track_local_file"/>
+        </rollback>
+    </changeSet>
+
+    <changeSet id="39-add-process-id-column-to-action-event-table" author="pushkin">
+        <addColumn tableName="action_event">
+            <column name="process_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="40-source-track-local-file-id-column-to-track-local-file-table" author="pushkin">
+        <addColumn tableName="track_local_file">
+            <column name="source_track_local_file_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="41-create-download-process-to-music-pack-table" author="pushkin">
+        <createTable tableName="download_process_to_music_pack">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="process_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_download_process_info_id"
+                             references="download_process_info(id)"/>
+            </column>
+            <column name="music_pack_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_music_pack_id"
+                             references="music_pack(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="42-drop-source-url-columns-notnull-constraint-from-source-tables" author="pushkin">
+        <dropNotNullConstraint tableName="music_album_source"
+                               columnName="source_url"/>
+        <dropNotNullConstraint tableName="music_artist_source"
+                               columnName="source_url"/>
+        <dropNotNullConstraint tableName="music_track_source"
+                               columnName="source_url"/>
+    </changeSet>
+
+    <changeSet id="43-rename-source-url-columns-to-external-source-url-for-source-tables" author="pushkin">
+        <renameColumn tableName="music_album_source"
+                      oldColumnName="source_url"
+                      newColumnName="external_source_url"/>
+        <renameColumn tableName="music_artist_source"
+                      oldColumnName="source_url"
+                      newColumnName="external_source_url"/>
+        <renameColumn tableName="music_track_source"
+                      oldColumnName="source_url"
+                      newColumnName="external_source_url"/>
+    </changeSet>
+
+    <changeSet id="44-add-local-file-id-column-to-music-track-source-table" author="pushkin">
+        <addColumn tableName="music_track_source">
+            <column name="local_file_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="45-add-event-data-id-column-to-action-event-table" author="pushkin">
+        <addColumn tableName="action_event">
+            <column name="event_data_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="46-drop-process-id-column-from-action-event-table" author="pushkin">
+        <dropColumn tableName="action_event" columnName="process_id"/>
+    </changeSet>
+
+    <changeSet id="47-create-download-process-to-music-track-table" author="pushkin">
+        <createTable tableName="download_process_to_music_track">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="process_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_download_process_info_id"
+                             references="download_process_info(id)"/>
+            </column>
+            <column name="music_track_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_music_track_id"
+                             references="music_track(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="48-add-duration-sec-column-to-music-track-table" author="pushkin">
+        <addColumn tableName="music_track">
+            <column name="duration_sec" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="49-add-channel-column-to-user-collection-table" author="pushkin">
+        <addColumn tableName="user_collection">
+            <column name="channel_name" type="varchar(200)"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="50-create-search-request-data-table" author="pushkin">
+        <createTable tableName="search_request_data">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" unique="true" primaryKey="true"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="data" type="nvarchar(1000)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

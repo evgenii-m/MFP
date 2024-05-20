@@ -1,0 +1,150 @@
+{
+  "result": true,
+  "items": [
+    {
+      "_id": 388908611,
+      "excerpt": "20ft Hip-Hop by Serge Taranovskiy on 20ft Radio!\r\nVisit our web-site: https://www.20ftradio.com\r\nSubscribe: https://www.facebook.com/20ftradio/",
+      "note": "",
+      "type": "video",
+      "cover": "https://thumbnailer.mixcloud.com/unsafe/600x600/extaudio/a/8/1/5/2215-b4f2-4540-ac98-686a58e1e1e0",
+      "tags": [
+        "hip_hop",
+        "for_work"
+      ],
+      "removed": false,
+      "title": "20ft Hip-Hop 24/07/2017",
+      "collection": {
+        "$ref": "collections",
+        "$id": 24412771,
+        "oid": 24412771
+      },
+      "link": "https://www.mixcloud.com/20ftradio/20ft-hip-hop-24072017/",
+      "created": "2022-04-26T12:56:55.190Z",
+      "lastUpdate": "2022-04-26T12:57:43.234Z",
+      "important": false,
+      "media": [
+        {
+          "type": "image",
+          "link": "https://thumbnailer.mixcloud.com/unsafe/600x600/extaudio/a/8/1/5/2215-b4f2-4540-ac98-686a58e1e1e0"
+        },
+        {
+          "type": "image",
+          "link": "https://thumbnailer.mixcloud.com/unsafe/300x300/extaudio/a/8/1/5/2215-b4f2-4540-ac98-686a58e1e1e0"
+        }
+      ],
+      "user": {
+        "$ref": "users",
+        "$id": 629473
+      },
+      "highlights": [],
+      "domain": "mixcloud.com",
+      "creatorRef": {
+        "_id": 629473,
+        "avatar": "https://up.raindrop.io/user/avatars/629/473/photo_2017_01_28_19_28_04.jpg",
+        "name": "nearlygonzo",
+        "email": ""
+      },
+      "sort": 388908609,
+      "collectionId": 24412771
+    },
+    {
+      "_id": 307696878,
+      "excerpt": "Fifty-odd years ago an eccentric billionaire, globetrotter, collector of beautiful things and all-round degenerate throws a garden party for the ages. Strange and unrealistic things happen behind the scenes, while people dance and enjoy themselves all over the mega-mansion. Once again a little like the soundtrack to a daft movie I'd enjoy for the visuals - and love for the score. Don’t you just wish you were there? - Moahaha\n\nTracklist & more episodes: www.20ftradio.net/dream-weapons/",
+      "type": "video",
+      "cover": "https://thumbnailer.mixcloud.com/unsafe/600x600/extaudio/a/7/8/1/f6be-ed6b-4cb9-8414-dda457c83011",
+      "tags": [
+        "20ft",
+        "jazz",
+        "world",
+        "groove",
+        "soundtrack",
+        "latin"
+      ],
+      "removed": false,
+      "title": "Dream Weapons: The Garden Party @ 20ft Radio - 12/07/2021",
+      "collection": {
+        "$ref": "collections",
+        "$id": 24412771,
+        "oid": 24412771
+      },
+      "link": "https://www.mixcloud.com/20ftradio/dream-weapons-the-garden-party-20ft-radio-12072021/",
+      "created": "2021-09-07T10:42:29.487Z",
+      "lastUpdate": "2022-04-26T12:58:05.972Z",
+      "important": false,
+      "media": [
+        {
+          "type": "image",
+          "link": "https://thumbnailer.mixcloud.com/unsafe/600x600/extaudio/a/7/8/1/f6be-ed6b-4cb9-8414-dda457c83011"
+        }
+      ],
+      "user": {
+        "$ref": "users",
+        "$id": 629473
+      },
+      "domain": "mixcloud.com",
+      "creatorRef": {
+        "_id": 629473,
+        "avatar": "https://up.raindrop.io/user/avatars/629/473/photo_2017_01_28_19_28_04.jpg",
+        "name": "nearlygonzo",
+        "email": ""
+      },
+      "sort": 388908611,
+      "cache": {
+        "status": "invalid-origin"
+      },
+      "highlights": [],
+      "note": "",
+      "collectionId": 24412771
+    },
+    {
+      "_id": 307682926,
+      "excerpt": "Since 2001 Dubmasta plays dub music of today, yesterday & tomorrow. The smoked out sounds of intergalactic version excursion from roots reggae & digital dancehall to hard steppas & dub techno.",
+      "type": "video",
+      "cover": "https://thumbnailer.mixcloud.com/unsafe/600x600/extaudio/2/2/d/0/c215-2aa9-42d2-b109-025911280f6f",
+      "tags": [
+        "dub",
+        "reggae",
+        "dubstep",
+        "punk",
+        "20ft"
+      ],
+      "removed": false,
+      "title": "Dubmasta @20ft Radio - 30/07/2021",
+      "collection": {
+        "$ref": "collections",
+        "$id": 24412771,
+        "oid": 24412771
+      },
+      "link": "https://www.mixcloud.com/20ftradio/dubmasta-20ft-radio-/",
+      "created": "2021-09-07T09:46:57.396Z",
+      "lastUpdate": "2022-04-26T12:57:59.574Z",
+      "important": false,
+      "media": [
+        {
+          "type": "image",
+          "link": "https://thumbnailer.mixcloud.com/unsafe/600x600/extaudio/2/2/d/0/c215-2aa9-42d2-b109-025911280f6f"
+        }
+      ],
+      "user": {
+        "$ref": "users",
+        "$id": 629473
+      },
+      "domain": "mixcloud.com",
+      "creatorRef": {
+        "_id": 629473,
+        "avatar": "https://up.raindrop.io/user/avatars/629/473/photo_2017_01_28_19_28_04.jpg",
+        "name": "nearlygonzo",
+        "email": ""
+      },
+      "sort": 388908610,
+      "cache": {
+        "status": "invalid-origin"
+      },
+      "highlights": [],
+      "note": "",
+      "collectionId": 24412771
+    }
+  ],
+  "count": 3,
+  "collectionId": 24412771
+}

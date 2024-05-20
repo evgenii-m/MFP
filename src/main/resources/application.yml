@@ -1,0 +1,95 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: music-feed-platform
+  liquibase:
+    default-schema: application
+    liquibase-schema: application
+    database-change-log-table: music_feed_platform_changelog
+    database-change-log-lock-table: music_feed_platform_changeloglock
+    change-log: classpath:db/liquibase-changelog.xml
+    enabled: false
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    default-property-inclusion: non_null
+    serialization:
+      indent_output: true
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        default_schema: application
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+  datasource:
+    hikari:
+      connection-timeout: 60000
+      maximum-pool-size: 5
+    type: com.zaxxer.hikari.HikariDataSource
+
+logging:
+  pattern:
+    console: "%d %-5level %logger : %msg%n"
+    file: "%d %-5level [%thread] %logger : %msg%n"
+  level:
+    org.springframework: INFO
+    ru.push.musicfeed.platform.application: DEBUG
+    com.github.kotlintelegrambot: INFO
+    ru.push.musicfeed.platform.external.source.ytdlp.YtDlpService: TRACE
+    ru.push.musicfeed.platform.external.source.ffmpeg: TRACE
+  file:
+    name: logs/application.log
+
+
+application-properties:
+  storageFolder: "media/"
+  storagePathSeparator: "/"
+  fileNameForbiddenChars: "<>:\"/\\|?*"
+  systemAdminUserIds: 1
+  telegramBot:
+    token: "${TELEGRAM_BOT_TOKEN}"
+    apiUrl: "https://api.telegram.org"
+  raindrops:
+    apiUrl: "https://api.raindrop.io/rest/v1"
+    token: "${RAINDROPS_TOKEN}"
+  soundcloud:
+    soundcloudMobileBaseUrl: "https://m.soundcloud.com"
+    timeoutSec: 60
+  ytDlp:
+    execPath: "yt-dlp"
+    downloadTimeoutSec: 600
+    searchTimeoutSec: 60
+    logEnable: false
+  ffmpeg:
+    execPath: "ffmpeg"
+    timeoutSec: 180
+    logEnable: false
+  mixcloud:
+    timeoutSec: 600
+    userAgent: "Wget/1.19.4 (linux-gnu)"
+  yandex:
+    oAuthClientUrl: "https://oauth.yandex.ru/authorize?response_type=code&client_id=${YANDEX_CLIENT_ID}&scope=music:content music:read music:write login:info login:email"
+    oAuthTokenUrl: "https://oauth.yandex.ru/token"
+    apiUrl: "https://api.music.yandex.net"
+    webUrl: "https://music.yandex.ru"
+    clientId: "${YANDEX_CLIENT_ID}"
+    clientSecret: "${YANDEX_CLIENT_SECRET}"
+  schedulers:
+    collectionsLoader:
+      intervalMs: 180000
+      initialDelayMs: 10000
+      enabled: true
+    downloadProcessStateCheck:
+      intervalMs: 180000
+      initialDelayMs: 10000
+      enabled: true
+      requestedHangTimeIntervalMinutes: 5
+      inProgressHangTimeIntervalMinutes: 10
+    cacheTotalCleaner:
+      intervalMs: 43200000  # 12h
+      initialDelayMs: 60000
+      enabled: true

@@ -1,0 +1,12 @@
+delete from music_pack_tag;
+delete from music_pack;
+delete from music_track_source;
+delete from music_album_source;
+delete from music_artist_source;
+delete from music_pack_track;
+delete from music_pack_album;
+delete from music_pack_artist;
+delete from user_collection;
+delete from user_data;
+delete from music_collection;
+delete from tag;

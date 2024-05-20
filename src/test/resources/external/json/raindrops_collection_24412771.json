@@ -1,0 +1,34 @@
+{
+  "result": true,
+  "item": {
+    "_id": 24412771,
+    "title": "20ft",
+    "description": "",
+    "public": false,
+    "view": "grid",
+    "count": 3,
+    "cover": [],
+    "expanded": false,
+    "sort": 0,
+    "user": {
+      "$ref": "users",
+      "$id": 629473
+    },
+    "creatorRef": {
+      "_id": 629473,
+      "name": "nearlygonzo",
+      "email": ""
+    },
+    "lastAction": "2022-04-26T12:58:06.009Z",
+    "created": "2022-04-26T12:56:51.849Z",
+    "lastUpdate": "2023-01-07T08:21:55.163Z",
+    "slug": "20ft",
+    "access": {
+      "for": 629473,
+      "level": 4,
+      "root": false,
+      "draggable": true
+    },
+    "author": true
+  }
+}

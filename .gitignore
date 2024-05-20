@@ -1,0 +1,11 @@
+/src/main/resources/application-local.yml
+/src/main/resources/application-prod.yml
+/docker/setup_env_prod.sh
+/build/
+/logs/
+/.idea/
+/.gradle/
+/deploy/
+/samples/
+/media/
+notes.txt

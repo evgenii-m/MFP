@@ -1,0 +1,41 @@
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:12///test?TC_REUSABLE=true
+    username: test
+    password: test
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      connection-timeout: 60000
+      maximum-pool-size: 5
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: public
+    hibernate:
+      ddl-auto: none
+  liquibase:
+    default-schema: public
+    liquibase-schema: public
+    enabled: true
+
+logging:
+  pattern:
+    console: "%d %-5level %logger : %msg%n"
+    file: "%d %-5level [%thread] %logger : %msg%n"
+  level:
+    org.springframework: INFO
+    ru.push.musicfeed.platform.application: INFO
+    org.testcontainers: INFO
+    org.apache.http: WARN
+    com.github.dockerjava: WARN
+    org.zeroturnaround.exec: WARN
+
+application-properties:
+  telegramBot:
+    token: "token"
+  raindrops:
+    apiUrl: "https://localhost"
+    token: "token"
+  externalSourceResponsesRecorder:
+    enabled: false
